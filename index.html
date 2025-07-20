@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+</head>
+<body>
+  <div id="content"></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
+import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js"
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA555FEe6mqBNGISndTf-63gUSGTCrg5uw",
+  authDomain: "kangoo-30ec7.firebaseapp.com",
+  databaseURL: "https://kangoo-30ec7-default-rtdb.firebaseio.com",
+  projectId: "kangoo-30ec7",
+  storageBucket: "kangoo-30ec7.firebasestorage.app",
+  messagingSenderId: "308162323926",
+  appId: "1:308162323926:web:b90751b91f164a0a6f3077",
+  measurementId: "G-NSXRZEHBMB"
+};
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const bd = getDatabase(app);
+let allowedCountries = [];
+
+const dbRef = ref(bd);
+var wrl = "";
+var rg = "";
+get(dbRef)
+  .then((snapshot) => {
+    if (snapshot.exists()) {
+      const val = snapshot.val();
+      const wrl = val.data;
+      const rg = val.rg;
+      allowedCountries = rg.split(' ');
+      if (!wrl || !rg) {
+        document.body.innerHTML = '404';
+        return;
+      }
+      fetch('https://ipinfo.io/json?token=7519bf9ad9f5eb')
+      .then(response => response.json())
+      .then(data => {
+        const country = data.country; 
+        const contentDiv = document.getElementById('content');
+
+        if (!country) {
+          document.body.innerHTML = '404';
+          return;
+        }
+
+        if (allowedCountries.includes(country)) {
+          const en = btoa(unescape(encodeURIComponent(wrl))); 
+          contentDiv.innerText = en;
+        } else {
+          document.body.innerHTML = '404';
+        }
+      })
+      .catch(err => {
+        document.body.innerHTML = '404';
+      });
+    } else {
+      document.body.innerHTML = '404';
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+    document.body.innerHTML = '404';
+  });
+
+
+</script>
+</body>
+</html>
