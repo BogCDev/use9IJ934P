@@ -18,7 +18,6 @@
       appId: "1:308162323926:web:b90751b91f164a0a6f3077",
       measurementId: "G-NSXRZEHBMB"
     };
-
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const bd = getDatabase(app);
@@ -69,7 +68,6 @@
         console.error(error);
         ErorDebuger();
       });
-
     function ErorDebuger() {
       if (window.webkit?.messageHandlers?.jsHandler) {
         window.webkit.messageHandlers.jsHandler.postMessage("error_404");
@@ -79,3 +77,4 @@
   </script>
 </body>
 </html>
+
